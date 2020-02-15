@@ -20,14 +20,15 @@
 	"support": {
 		"source": "https://github.com/ssovit/helper",
 		"issues": "https://github.com/ssovit/helper/issues",
-		"docs": "https://github.com/ssovit/helper",
 		"email": "info@wppress.net"
 	},
 	"require": {
 		"php": ">=5.3"
 	},
 	"autoload": {
-		"files": ["Helper.php"]
+		"psr-4": {
+			"Sovit\\": "lib/"
+		}
 	},
 	"type": "library"
 }
