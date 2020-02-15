@@ -29,6 +29,5 @@
 	"autoload": {
 		"files": ["Helper.php"]
 	},
-	"type": "library",
-	"minimum-stability": "dev"
+	"type": "library"
 }
