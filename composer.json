@@ -28,5 +28,7 @@
 	},
 	"autoload": {
 		"files": ["Helper.php"]
-	}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true
 }
