@@ -13,7 +13,6 @@ if (!class_exists('\Sovit\Helper')) {
             if (!empty($btn)) {
                 echo wpautop(sprintf('<a href="%s"" class="button-primary">%s</a>', $btn['url'], $btn['label']));
             }
-            new \WPPres_helper\go();
             echo "</div>";
 
         }
