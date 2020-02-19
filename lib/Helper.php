@@ -23,11 +23,14 @@ if (!class_exists('\Sovit\Helper')) {
          * @param $value
          * @param $hideEmpty
          */
-        public static function get_terms($taxonomy = 'category', $key = "slug", $value => "name", $hideEmpty = true) {
+        public static function get_terms($taxonomy = 'category', $key = "slug", $value = "name", $hideEmpty = true) {
             $terms = get_terms([
                 'taxonomy'   => $taxonomy,
                 'hide_empty' => $hideEmpty,
             ]);
+            if (is_wp_error($terms)) {
+                return [];
+            }
 
             return wp_list_pluck($terms, $value, $key);
         }
