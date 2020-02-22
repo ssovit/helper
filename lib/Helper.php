@@ -18,6 +18,18 @@ if (!class_exists('\Sovit\Helper')) {
         }
 
         /**
+         * @param $file
+         */
+        public static function get_file_url($file = __FILE__) {
+            $file_path = str_replace("\\", "/", str_replace(str_replace("/", "\\", WP_CONTENT_DIR), "", $file));
+            if ($file_path) {
+                return content_url($file_path);
+            }
+
+            return false;
+        }
+
+        /**
          * @param $taxonomy
          * @param $key
          * @param $value
