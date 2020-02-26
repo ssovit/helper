@@ -28,6 +28,11 @@ if (!class_exists('\Sovit\Helper')) {
 
             return false;
         }
+        public static function map_for_checkbox_list($array=[]){
+            return array_map(function($key,$value){
+                return ["value"=>$key,"name"=>$value];
+            }, array_keys($array), $array);
+        }
 
         /**
          * @param $taxonomy
