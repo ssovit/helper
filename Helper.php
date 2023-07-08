@@ -1,20 +1,23 @@
 <?php
-namespace Sovit;
-if (!class_exists('\Sovit\Helper')) {
+namespace Sovit\Utilities;
+
+if (!class_exists(__NAMESPACE__ . "\Helper")) {
     class Helper {
         /**
          * @param $message
-         * @param $type
+         * @param $class
          * @param $btn
+         * @param array $attributes
          */
-        public static function add_notice($message = "", $type = "success", $btn = false) {
-            echo "<div class=\"notice $type\">";
+        public static function add_notice($message = "", $class = "success", $btn = false, $attributes = array()) {
+            $attributes['class'] = "notice {$class}";
+            $attr                = self::render_html_attributes($attributes);
+            echo "<div {$attr}>";
             echo wpautop($message);
             if (!empty($btn)) {
-                echo wpautop(sprintf('<a href="%s"" class="button-primary">%s</a>', $btn['url'], $btn['label']));
+                echo wpautop(sprintf('<a href="%s" class="button-primary" target="_blank">%s</a>', $btn['url'], $btn['label']));
             }
             echo "</div>";
-
         }
 
         /**
@@ -28,10 +31,22 @@ if (!class_exists('\Sovit\Helper')) {
 
             return false;
         }
-        public static function map_for_checkbox_list($array=[]){
-            return array_map(function($key,$value){
-                return ["value"=>$key,"name"=>$value];
-            }, array_keys($array), $array);
+
+        /**
+         * @param $string
+         * @param $start
+         * @param $end
+         */
+        public static function get_string_between($string, $start, $end) {
+            $string = ' ' . $string;
+            $ini    = strpos($string, $start);
+            if (0 == $ini) {
+                return '';
+            }
+
+            $ini += strlen($start);
+            $len = strpos($string, $end, $ini) - $ini;
+            return substr($string, $ini, $len);
         }
 
         /**
@@ -41,12 +56,12 @@ if (!class_exists('\Sovit\Helper')) {
          * @param $hideEmpty
          */
         public static function get_terms($taxonomy = 'category', $key = "slug", $value = "name", $hideEmpty = true) {
-            $terms = get_terms([
+            $terms = get_terms(array(
                 'taxonomy'   => $taxonomy,
                 'hide_empty' => $hideEmpty,
-            ]);
+            ));
             if (is_wp_error($terms)) {
-                return [];
+                return array();
             }
 
             return wp_list_pluck($terms, $value, $key);
@@ -55,7 +70,7 @@ if (!class_exists('\Sovit\Helper')) {
         /**
          * @param $filename
          * @param $suggested
-         * @return string
+         * @return mixed
          */
         public static function goodname($filename = "", $suggested = "wppress") {
             $part          = explode(".", $filename);
@@ -66,113 +81,116 @@ if (!class_exists('\Sovit\Helper')) {
 
         /**
          * @param $raw
-         * @return mixed
          */
         public static function kses($raw) {
 
-            $allowed_tags = [
-                'a'                             => [
-                    'class' => [],
-                    'href'  => [],
-                    'rel'   => [],
-                    'title' => [],
-                ],
-                'abbr'                          => [
-                    'title' => [],
-                ],
-                'b'                             => [],
-                'blockquote'                    => [
-                    'cite' => [],
-                ],
-                'cite'                          => [
-                    'title' => [],
-                ],
-                'code'                          => [],
-                'del'                           => [
-                    'datetime' => [],
-                    'title'    => [],
-                ],
-                'dd'                            => [],
-                'div'                           => [
-                    'class' => [],
-                    'title' => [],
-                    'style' => [],
-                ],
-                'dl'                            => [],
-                'dt'                            => [],
-                'em'                            => [],
-                'h1'                            => [
-                    'class' => [],
-                ],
-                'h2'                            => [
-                    'class' => [],
-                ],
-                'h3'                            => [
-                    'class' => [],
-                ],
-                'h4'                            => [
-                    'class' => [],
-                ],
-                'h5'                            => [
-                    'class' => [],
-                ],
-                'h6'                            => [
-                    'class' => [],
-                ],
-                'i'                             => [
-                    'class' => [],
-                ],
-                'img'                           => [
-                    'alt'    => [],
-                    'class'  => [],
-                    'height' => [],
-                    'src'    => [],
-                    'width'  => [],
-                ],
-                'li'                            => [
-                    'class' => [],
-                ],
-                'ol'                            => [
-                    'class' => [],
-                ],
-                'p'                             => [
-                    'class' => [],
-                ],
-                'q'                             => [
-                    'cite'  => [],
-                    'title' => [],
-                ],
-                'span'                          => [
-                    'class' => [],
-                    'title' => [],
-                    'style' => [],
-                ],
-                'iframe'                        => [
-                    'width'       => [],
-                    'height'      => [],
-                    'scrolling'   => [],
-                    'frameborder' => [],
-                    'allow'       => [],
-                    'src'         => [],
-                ],
-                'strike'                        => [],
-                'br'                            => [],
-                'strong'                        => [],
-                'data-wow-duration'             => [],
-                'data-wow-delay'                => [],
-                'data-wallpaper-options'        => [],
-                'data-stellar-background-ratio' => [],
-                'ul'                            => [
-                    'class' => [],
-                ],
-            ];
+            $allowed_tags = array(
+                'a'                             => array(
+                    'class'  => array(),
+                    'href'   => array(),
+                    'rel'    => array(),
+                    'title'  => array(),
+                    'target' => array('_blank'),
+                ),
+                'abbr'                          => array(
+                    'title' => array(),
+                ),
+                'b'                             => array(),
+                'blockquote'                    => array(
+                    'cite' => array(),
+                ),
+                'cite'                          => array(
+                    'title' => array(),
+                ),
+                'code'                          => array(),
+                'del'                           => array(
+                    'datetime' => array(),
+                    'title'    => array(),
+                ),
+                'dd'                            => array(),
+                'div'                           => array(
+                    'class' => array(),
+                    'title' => array(),
+                    'style' => array(),
+                ),
+                'dl'                            => array(),
+                'dt'                            => array(),
+                'em'                            => array(),
+                'h1'                            => array(
+                    'class' => array(),
+                ),
+                'h2'                            => array(
+                    'class' => array(),
+                ),
+                'h3'                            => array(
+                    'class' => array(),
+                ),
+                'h4'                            => array(
+                    'class' => array(),
+                ),
+                'h5'                            => array(
+                    'class' => array(),
+                ),
+                'h6'                            => array(
+                    'class' => array(),
+                ),
+                'i'                             => array(
+                    'class' => array(),
+                ),
+                'img'                           => array(
+                    'alt'    => array(),
+                    'class'  => array(),
+                    'height' => array(),
+                    'src'    => array(),
+                    'width'  => array(),
+                ),
+                'li'                            => array(
+                    'class' => array(),
+                ),
+                'ol'                            => array(
+                    'class' => array(),
+                ),
+                'p'                             => array(
+                    'class' => array(),
+                ),
+                'q'                             => array(
+                    'cite'  => array(),
+                    'title' => array(),
+                ),
+                'span'                          => array(
+                    'class' => array(),
+                    'title' => array(),
+                    'style' => array(),
+                ),
+                'iframe'                        => array(
+                    'width'       => array(),
+                    'height'      => array(),
+                    'scrolling'   => array(),
+                    'frameborder' => array(),
+                    'allow'       => array(),
+                    'src'         => array(),
+                ),
+                'strike'                        => array(),
+                'br'                            => array(),
+                'strong'                        => array(),
+                'data-wow-duration'             => array(),
+                'data-wow-delay'                => array(),
+                'data-wallpaper-options'        => array(),
+                'data-stellar-background-ratio' => array(),
+                'ul'                            => array(
+                    'class' => array(),
+                ),
+            );
+            return wp_kses($raw, $allowed_tags);
+        }
 
-            if (function_exists('wp_kses')) {
-                // WP is here
-                return wp_kses($raw, $allowed_tags);
-            } else {
-                return $raw;
-            }
+        /**
+         * @param array $array
+         */
+        public static function map_for_checkbox_list($array = array()) {
+            return array_map(function ($key, $value) {
+                return array("value" => $key, "name" => $value);
+            }, array_keys($array), $array);
         }
 
         /**
@@ -184,28 +202,27 @@ if (!class_exists('\Sovit\Helper')) {
             if (parse_url($rel, PHP_URL_SCHEME) != '') {
                 return $rel;
             }
-            if ($rel[0] == '#' || $rel[0] == '?') {
+            if ('#' == $rel[0] || '?' == $rel[0]) {
                 return $base . $rel;
             }
             $base = trailingslashit($base);
             extract(parse_url($base));
 
             $path = preg_replace('#/[^/]*$#', '', $path);
-            if ($rel[0] == '/') {
+            if ('/' == $rel[0]) {
                 $path = '';
             }
             $abs = "$host$path/$rel";
-            $re  = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
+            $re  = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
             for ($n = 1; $n > 0; $abs = preg_replace($re, '/', $abs, -1, $n)) {}
             return $scheme . '://' . $abs;
         }
 
         /**
          * @param $format
-         * @return mixed
          */
         public static function phpToMoment($format) {
-            $replacements = [
+            $replacements = array(
                 'd' => 'DD',
                 'D' => 'ddd',
                 'j' => 'D',
@@ -243,7 +260,7 @@ if (!class_exists('\Sovit\Helper')) {
                 'c' => '', // no equivalent
                 'r' => '', // no equivalent
                 'U' => 'X',
-            ];
+            );
             return strtr($format, $replacements);
         }
 
@@ -251,7 +268,7 @@ if (!class_exists('\Sovit\Helper')) {
          * @param array $attributes
          */
         public static function render_html_attributes(array $attributes) {
-            $rendered_attributes = [];
+            $rendered_attributes = array();
 
             foreach ($attributes as $attribute_key => $attribute_values) {
                 if (\is_array($attribute_values)) {
@@ -272,7 +289,7 @@ if (!class_exists('\Sovit\Helper')) {
         }
 
         public static function timezone() {
-            return array_flip([
+            return array_flip(array(
                 "Visitor's Default"                           => 'USER_BROWSER',
                 '(UTC-11:00) Midway Island'                   => 'Pacific/Midway',
                 '(UTC-11:00) Samoa'                           => 'Pacific/Samoa',
@@ -417,8 +434,18 @@ if (!class_exists('\Sovit\Helper')) {
                 '(UTC+12:00) Solomon Is.'                     => 'Asia/Magadan',
                 '(UTC+12:00) Wellington'                      => 'Pacific/Auckland',
                 '(UTC+13:00) Nuku\'alofa'                     => 'Pacific/Tongatapu',
-            ]);
+            ));
 
+        }
+
+        /**
+         * @param $modifier
+         * @param $against
+         * @param $prefix
+         */
+        public static function verify_fingerprint($modifier, $against, $prefix = "") {
+            // prefix is supposed to be your secret if you pass it
+            return md5($prefix . ":" . $modifier . ":" . $_SERVER["HTTP_USER_AGENT"]) === $against;
         }
     }
 }

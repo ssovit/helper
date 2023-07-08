@@ -1,15 +1,10 @@
 {
 	"name": "ssovit/helper",
-	"description": "Helper Class for common usage",
-	"license": "GPL-2.0-only",
-	"homepage": "https://wppress.net/",
+	"description": "WordPress Helper",
+	"license": "GPL2+",
+	"homepage": "https://ssovit.com/",
 	"authors": [
-		{
-			"name": "WPPress",
-			"email": "info@wppress.net",
-			"homepage": "https://wppress.net/",
-			"role": "Developer"
-        },
+		
 		{
 			"name": "Sovit Tamrakar",
 			"email": "sovit.tamrakar@gmail.com",
@@ -20,14 +15,11 @@
 	"support": {
 		"source": "https://github.com/ssovit/helper",
 		"issues": "https://github.com/ssovit/helper/issues",
-		"email": "info@wppress.net"
-	},
-	"require": {
-		"php": ">=5.3"
+		"email": "sovit.tamrakar@gmail.com"
 	},
 	"autoload": {
 		"psr-4": {
-			"Sovit\\": ""
+			"Sovit\\Utilities\\": ""
 		}
 	},
 	"type": "library"
